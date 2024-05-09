@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Env } from "./env.config";
 
 export const dbConfig = async (): Promise<void> => {
+    console.log("da fuq", Env.MONGODB_URI)
     try {
         await mongoose.connect(Env.MONGODB_URI)
         logger.info('Connected to MongoDB')
