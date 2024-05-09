@@ -32,12 +32,11 @@ class Application extends App {
     }
 
     extraMiddleware(callback: () => void): void {
-        const allowedOrigins: string[] = Env.ALLOWED_ORIGINS ? Env.ALLOWED_ORIGINS.split(",") : [];
         this.app.use(cors({
-            origin: allowedOrigins, //required to set to frontend web url due to security from web
-            methods: ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"],
+            origin: "*",
+            methods: "*",
             allowedHeaders: ["*"],
-            credentials: true //required to set to true due to use cookie base auth
+            credentials: true
         }));
         callback();
     }

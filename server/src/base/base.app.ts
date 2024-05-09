@@ -22,12 +22,6 @@ export abstract class App {
     }
 
     private config(): void {
-        const allowedOrigins = Env.ALLOWED_ORIGINS ? Env.ALLOWED_ORIGINS.split(",") : "*";
-        this.app.use(cors({
-            origin: allowedOrigins,
-            credentials: true
-        }));
-
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
 
