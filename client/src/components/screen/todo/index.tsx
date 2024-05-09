@@ -1,5 +1,5 @@
-import { Box, IconButton, Paper, Popover, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Tooltip, Typography, useTheme } from "@mui/material"
-import { IconDotsVertical, IconTrashX } from "@tabler/icons-react";
+import { alpha, Box, IconButton, InputAdornment, Paper, Popover, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Toolbar, Tooltip, Typography, useTheme } from "@mui/material"
+import { IconDotsVertical, IconSearch, IconTrashX } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apis } from "../../../api";
 import { ITodo } from "../../../api/todo/type";
@@ -42,10 +42,44 @@ function EnhancedTableHead() {
     );
 }
 
+interface EnhancedTableToolbarProps {
+    handleSearch: React.ChangeEventHandler<HTMLInputElement>;
+    search: string;
+}
+
+const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
+    const { handleSearch, search } = props;
+
+    return (
+        <Toolbar
+            sx={{
+                pl: { sm: 2 },
+                pr: { xs: 1, sm: 1 },
+            }}
+        >
+            <Box sx={{ flex: '1 1 100%' }}>
+                <TextField
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <IconSearch size="1.1rem" />
+                            </InputAdornment>
+                        ),
+                    }}
+                    placeholder="Search Product"
+                    size="small"
+                    onChange={handleSearch}
+                    value={search}
+                />
+            </Box>
+        </Toolbar>
+    );
+};
 
 const TodoScreen = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(0);
+    const [searchTerm, setSearchTerm] = useState("");
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [openPopovers, setOpenPopovers] = useState<boolean[]>([]);
 
@@ -62,12 +96,13 @@ const TodoScreen = () => {
     };
 
     const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
-        // const filteredRows: ProductType[] = getProducts.filter((row) => {
-        //     return row.title.toLowerCase().includes(event.target.value);
-        // });
-        // setSearch(event.target.value);
-        // setRows(filteredRows);
+        setSearchTerm(event.target.value);
+        setPage(0);
     };
+
+    const filteredData = data?.filter((row: ITodo) => {
+        return row.title.toLowerCase().includes(searchTerm.toLowerCase());
+    });
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>, index: number) => {
         setAnchorEl(event.currentTarget);
@@ -112,18 +147,15 @@ const TodoScreen = () => {
 
     return (
         <Box>
-            {/* <Box sx={{
-                display: "flex",
-                gap: 4,
-            }}>
+
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <EnhancedTableToolbar
-                    numSelected={0}
-                    search={""}
-                    handleSearch={(event: any) => handleSearch(event)}
+                    search={searchTerm}
+                    handleSearch={handleSearch}
                 />
                 <AddTodo />
-            </Box> */}
-            <AddTodo />
+            </Box>
             <Paper variant="outlined" sx={{ mx: 2, mt: 1, border: `1px solid ${borderColor}` }}>
                 <TableContainer>
                     <Table sx={{ minWidth: 750 }}
@@ -131,7 +163,7 @@ const TodoScreen = () => {
                         size='medium'>
                         <EnhancedTableHead />
                         <TableBody>
-                            {data?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            {filteredData?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row: ITodo, index: number) => {
                                     const open = openPopovers[index] || false;
                                     return <TableRow key={row._id}>

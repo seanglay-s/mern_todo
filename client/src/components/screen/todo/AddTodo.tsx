@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, TextField, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, TextField, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import { useCallback, useState } from "react";
 import { formValidation } from "../../../configs/formValidationSchema";
@@ -6,8 +6,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apis } from "../../../api";
 import { ICreateTodo } from "../../../api/todo/type";
 import { LoadingButton } from "@mui/lab";
-
-
 
 const AddTodo = () => {
     const [open, setOpen] = useState(false);
@@ -22,7 +20,7 @@ const AddTodo = () => {
 
     const createTodoMutation = useMutation({
         mutationFn: apis.todo.createTodo
-    })
+    });
     const queryClient = useQueryClient();
 
     const handleSubmit = useCallback((values: ICreateTodo, { resetForm }: { resetForm: () => void }) => {
@@ -31,7 +29,7 @@ const AddTodo = () => {
                 queryClient.invalidateQueries({
                     queryKey: ['todos']
                 });
-                resetForm()
+                resetForm();
                 handleClose();
             },
             onError: (error: any) => {
@@ -39,8 +37,8 @@ const AddTodo = () => {
                 console.log(message);
                 handleClose();
             },
-        })
-    }, [createTodoMutation, queryClient, handleClose])
+        });
+    }, [createTodoMutation, queryClient, handleClose]);
 
     const formik = useFormik({
         initialValues: {
@@ -50,7 +48,8 @@ const AddTodo = () => {
         },
         validationSchema: formValidation.createUpdateTodoSchema,
         onSubmit: handleSubmit
-    })
+    });
+
     return (
         <>
             <Button sx={{ mx: 2 }} variant="contained" disableElevation color="primary" onClick={handleClickOpen}>
@@ -63,8 +62,8 @@ const AddTodo = () => {
                             Add New Todo
                         </Typography>
                         <DialogContentText>
-                            To add new notes please enter your title and description. and press the
-                            submit button to add new todo.
+                            To add new notes please enter your title and description, and press the
+                            submit button to add a new todo.
                         </DialogContentText>
                         <TextField
                             margin="normal"
@@ -95,25 +94,20 @@ const AddTodo = () => {
                             variant="outlined"
                         />
                     </DialogContent>
-
                     <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        {createTodoMutation.isPending ? <LoadingButton loading
-                            variant="contained"
-                            color="secondary" /> : <Button
-                                type="submit"
-                                variant="contained"
-                            >
-                            Submit
-                        </Button>
-                        }
-
+                        {createTodoMutation.isPending ? (
+                            <LoadingButton loading variant="contained" color="secondary" />
+                        ) : (
+                            <Button type="submit" variant="contained">
+                                Submit
+                            </Button>
+                        )}
                     </DialogActions>
                 </form>
-
             </Dialog>
         </>
-    )
-}
+    );
+};
 
-export default AddTodo
+export default AddTodo;
