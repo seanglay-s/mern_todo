@@ -16,4 +16,5 @@ services:
       dockerfile: 'Dockerfile'
     image: "todo-client"
     ports:
-      - "3001:3001"      
+      - "3001:3001"     
+      - "80:80" 
