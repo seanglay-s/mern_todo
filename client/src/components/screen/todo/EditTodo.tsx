@@ -28,7 +28,7 @@ const EditTodo = (todo: { todo: ITodo }) => {
 
     const handleSubmit = useCallback((values: IUpdateTodo, { resetForm }: { resetForm: () => void }) => {
         updateTodoMutation.mutate(values, {
-            onSuccess: (data) => {
+            onSuccess: () => {
                 queryClient.invalidateQueries({
                     queryKey: ['todos']
                 });
