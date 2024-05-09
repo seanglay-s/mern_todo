@@ -1,10 +1,10 @@
 export const API_ENDPOINTS = {
     BASE_URL: import.meta.env.VITE_APP_API_BASE_URL,
     TODO: {
-        CREATE_TODO: "/todos",
-        LIST_ALL_TODOS: "/todos",
-        GET_TODO_DETAIL: "/todos/:slug-id",
-        UPDATE_TODO: "/todos/:slug-id",
-        DELETE_TODO: '/todos/:slug-id'
+        CREATE_TODO: () => `${API_ENDPOINTS.BASE_URL}/todos`,
+        LIST_ALL_TODOS: () => `${API_ENDPOINTS.BASE_URL}/todos`,
+        GET_TODO_DETAIL: (slugId: string) => `${API_ENDPOINTS.BASE_URL}/todos/${slugId}`,
+        UPDATE_TODO: (slugId: string) => `${API_ENDPOINTS.BASE_URL}/todos/${slugId}`,
+        DELETE_TODO: (slugId: string) => `${API_ENDPOINTS.BASE_URL}/todos/${slugId}`
     },
 };

@@ -1,15 +1,16 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, TextField, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, ListItemIcon, ListItemText, MenuItem, TextField, Typography } from "@mui/material"
 import { useFormik } from "formik";
 import { useCallback, useState } from "react";
 import { formValidation } from "../../../configs/formValidationSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apis } from "../../../api";
-import { ICreateTodo } from "../../../api/todo/type";
+import { ITodo, IUpdateTodo } from "../../../api/todo/type";
 import { LoadingButton } from "@mui/lab";
+import { IconEditCircle } from "@tabler/icons-react";
 
 
 
-const AddTodo = () => {
+const EditTodo = (todo: { todo: ITodo }) => {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -20,13 +21,13 @@ const AddTodo = () => {
         setOpen(false);
     };
 
-    const createTodoMutation = useMutation({
-        mutationFn: apis.todo.createTodo
+    const updateTodoMutation = useMutation({
+        mutationFn: (value: IUpdateTodo) => apis.todo.updateTodo(value)
     })
     const queryClient = useQueryClient();
 
-    const handleSubmit = useCallback((values: ICreateTodo, { resetForm }: { resetForm: () => void }) => {
-        createTodoMutation.mutate(values, {
+    const handleSubmit = useCallback((values: IUpdateTodo, { resetForm }: { resetForm: () => void }) => {
+        updateTodoMutation.mutate(values, {
             onSuccess: (data) => {
                 queryClient.invalidateQueries({
                     queryKey: ['todos']
@@ -37,34 +38,39 @@ const AddTodo = () => {
             onError: (error: any) => {
                 const message = error?.response?.data?.message || error?.message;
                 console.log(message);
+                resetForm()
                 handleClose();
             },
         })
-    }, [createTodoMutation, queryClient, handleClose])
+    }, [updateTodoMutation])
 
     const formik = useFormik({
         initialValues: {
-            title: '',
-            description: "",
-            completed: false
+            title: todo.todo.title,
+            description: todo.todo.description,
+            completed: todo.todo.completed,
+            id: todo.todo._id
         },
         validationSchema: formValidation.createUpdateTodoSchema,
         onSubmit: handleSubmit
     })
     return (
         <>
-            <Button sx={{ mx: 2 }} variant="contained" disableElevation color="primary" onClick={handleClickOpen}>
-                Add Note
-            </Button>
+            <MenuItem onClick={handleClickOpen}>
+                <ListItemIcon>
+                    <IconEditCircle />
+                </ListItemIcon>
+                <ListItemText>Edit</ListItemText>
+            </MenuItem>
             <Dialog open={open} onClose={handleClose}>
                 <form onSubmit={formik.handleSubmit}>
                     <DialogContent>
                         <Typography variant="h5" mb={2} fontWeight={700}>
-                            Add New Todo
+                            Update New Todo
                         </Typography>
                         <DialogContentText>
                             To add new notes please enter your title and description. and press the
-                            submit button to add new todo.
+                            submit button to update new todo.
                         </DialogContentText>
                         <TextField
                             margin="normal"
@@ -98,7 +104,7 @@ const AddTodo = () => {
 
                     <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        {createTodoMutation.isPending ? <LoadingButton loading
+                        {updateTodoMutation.isPending ? <LoadingButton loading
                             variant="contained"
                             color="secondary" /> : <Button
                                 type="submit"
@@ -116,4 +122,4 @@ const AddTodo = () => {
     )
 }
 
-export default AddTodo
+export default EditTodo

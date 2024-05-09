@@ -10,3 +10,10 @@ export interface ICreateTodo {
     description: string,
     completed: boolean
 }
+
+export interface IUpdateTodo {
+    id: string,
+    title: string,
+    description: string,
+    completed: boolean
+}
