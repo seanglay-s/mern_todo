@@ -1,6 +1,6 @@
 import { BaseService } from "../../base/base.service";
 import { TodoRepository } from "./todo.repository";
-import { TodoType, TodoUpdateType } from "./todo.type";
+import { TodoStatusUpdateType, TodoType, TodoUpdateType } from "./todo.type";
 
 export class TodoService extends BaseService {
     private todoRepo: TodoRepository
@@ -23,6 +23,10 @@ export class TodoService extends BaseService {
 
     public async update(updateTodo: TodoUpdateType) {
         return this.todoRepo.update(updateTodo)
+    }
+
+    public async updateStatus(updateStatus: TodoStatusUpdateType) {
+        return this.todoRepo.updateStatus(updateStatus)
     }
 
 }

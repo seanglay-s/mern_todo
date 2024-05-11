@@ -46,9 +46,23 @@ export class TodoController extends BaseController {
                 _id: req.params.id, ...req.body
             }
             await this.todoService.update(args)
-            this.safeResponse(res, { payload: { message: "Todo item deleted successfully." } });
+            this.safeResponse(res, { payload: { message: "Todo item updated successfully." } });
         } catch (error) {
             this.safeError(res, error);
         }
     }
+
+    public updateStatus = async (req: Request, res: Response) => {
+        try {
+            const args: TodoUpdateType = {
+                _id: req.params.id, ...req.body
+            }
+            await this.todoService.update(args)
+            this.safeResponse(res, { payload: { message: "Todo item update status successfully." } });
+        } catch (error) {
+            this.safeError(res, error)
+        }
+    }
+
+
 }

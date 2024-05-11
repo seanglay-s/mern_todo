@@ -15,6 +15,7 @@ export class TodoRoute extends BaseRoute<TodoController> {
                 path: '/'
             }, this.controller.create.bind(this.controller)),
             this.delete({ path: "/:id" }, this.controller.delete.bind(this.controller)),
-            this.put({ path: '/:id' }, this.controller.update.bind(this.controller))
+            this.put({ path: '/:id' }, this.controller.update.bind(this.controller)),
+            this.patch({ path: "/:id" }, this.controller.updateStatus.bind(this.controller))
     }
 }

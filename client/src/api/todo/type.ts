@@ -17,3 +17,8 @@ export interface IUpdateTodo {
     description: string,
     completed: boolean
 }
+
+export interface IUpdateStatusTodo {
+    id: string,
+    completed: boolean
+}

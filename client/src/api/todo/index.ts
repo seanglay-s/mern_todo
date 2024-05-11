@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "../../configs/apiEndpoints"
 import { API } from "../base"
-import { ICreateTodo, ITodo, IUpdateTodo } from "./type"
+import { ICreateTodo, ITodo, IUpdateStatusTodo, IUpdateTodo } from "./type"
 
 export const TODO_API = {
     async getTodo(): Promise<ITodo[]> {
@@ -19,6 +19,10 @@ export const TODO_API = {
     async updateTodo(params: IUpdateTodo) {
         console.log(params)
         const res = await API.put(API_ENDPOINTS.TODO.UPDATE_TODO(params.id), params)
+        return res
+    },
+    async updateStatusTodo(param: IUpdateStatusTodo) {
+        const res = await API.patch(API_ENDPOINTS.TODO.UPDATE_STATUS_TODO(param.id), param)
         return res
     }
 }

@@ -1,9 +1,9 @@
 import { Box, IconButton, InputAdornment, Paper, Popover, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Toolbar, Tooltip, Typography, useTheme } from "@mui/material"
-import { IconDotsVertical, IconSearch, IconTrashX } from "@tabler/icons-react";
+import { IconDotsVertical, IconSearch, IconStatusChange, IconTrashX } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apis } from "../../../api";
-import { ITodo } from "../../../api/todo/type";
-import { ChangeEvent, useState, MouseEvent } from "react";
+import { ITodo, IUpdateStatusTodo } from "../../../api/todo/type";
+import { ChangeEvent, useState, MouseEvent, useCallback } from "react";
 import AddTodo from "./AddTodo";
 import ConfirmationDialog from "../../shared/ConfirmationDialog";
 import EditTodo from "./EditTodo";
@@ -141,6 +141,24 @@ const TodoScreen = () => {
         })
     }
 
+    const updateStatusMutation = useMutation({
+        mutationFn: (value: IUpdateStatusTodo) => apis.todo.updateStatusTodo(value)
+    })
+
+    const handleUpdateStatus = useCallback((values: IUpdateStatusTodo) => {
+        updateStatusMutation.mutate(values, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: ['todos']
+                });
+            },
+            onError: (error: any) => {
+                const message = error?.response?.data?.message || error?.message;
+                console.log(message);
+            },
+        })
+    }, [updateStatusMutation])
+
     const theme = useTheme();
 
     const borderColor = theme.palette.divider;
@@ -218,6 +236,23 @@ const TodoScreen = () => {
                                             >
                                                 <Paper sx={{ width: 320, maxWidth: '100%' }}>
                                                     <EditTodo todo={row} />
+                                                    <ConfirmationDialog
+                                                        menu={{
+                                                            icon: <IconStatusChange />,
+                                                            title: 'Update Status',
+                                                        }}
+                                                        button={{
+                                                            agreeTitle: 'Yes, change it',
+                                                            disagreeTitle: 'Keep this status',
+                                                        }}
+                                                        handleAgree={async () => {
+                                                            handleUpdateStatus({
+                                                                id: row._id,
+                                                                completed: !row.completed
+                                                            })
+                                                            handleClose(index);
+                                                        }}
+                                                    />
                                                     <ConfirmationDialog
                                                         menu={{
                                                             icon: <IconTrashX />,

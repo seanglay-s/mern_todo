@@ -1,6 +1,6 @@
 import { BaseRepository } from "../../base/base.repository";
 import Todo, { ITodo } from './todo.model'
-import { TodoType, TodoUpdateType } from "./todo.type";
+import { TodoStatusUpdateType, TodoType, TodoUpdateType } from "./todo.type";
 
 export class TodoRepository extends BaseRepository {
     async findAll(): Promise<any[]> {
@@ -21,4 +21,7 @@ export class TodoRepository extends BaseRepository {
         return await Todo.findByIdAndUpdate(param._id, param, { new: true })
     }
 
+    async updateStatus(todoUpdateStatus: TodoStatusUpdateType) {
+        await Todo.findByIdAndUpdate(todoUpdateStatus._id, todoUpdateStatus)
+    }
 }
