@@ -4,9 +4,9 @@ import { TodoStatusUpdateType, TodoType, TodoUpdateType } from "./todo.type";
 
 export class TodoService extends BaseService {
     private todoRepo: TodoRepository
-    constructor(repos: { todoRepo: TodoRepository }) {
-        super(repos);
-        this.todoRepo = this.getRepository("todoRepo")
+    constructor({ todoRepository }: { todoRepository: TodoRepository }) {
+        super({ todoRepository });
+        this.todoRepo = todoRepository;
     }
 
     public async list(): Promise<any> {

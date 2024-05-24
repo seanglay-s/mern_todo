@@ -1,9 +1,29 @@
-version: '3.8'
+version: "3.9"
 services:
+  redis:
+    image: redis:7.0-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  mongo_db:
+    image: mongo:7.0.10-rc0-jammy
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017" 
+
   server:
     build:
       context: "./server"
       dockerfile: "Dockerfile"
+    depends_on:
+      - mongo_db
+      - redis
+
     image: "todo-server"
     env_file:
       - "./server/.env"
@@ -14,18 +34,13 @@ services:
     build:
       context: "./client"
       dockerfile: 'Dockerfile'
+    depends_on:
+      - server
     image: "todo-client"
     ports:
       - "3001:3001"     
       - "80:80" 
 
-  mongo_db:
-    image: mongo:7.0.10-rc0-jammy
-    restart: always
-    volumes:
-      - mongodb_data:/data/db
-    ports:
-      - "27017:27017"     
-
 volumes:
   mongodb_data:
+  redis_data:

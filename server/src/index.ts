@@ -19,7 +19,7 @@ const appConfig: AppConfig = {
 dbConfig()
 class Application extends App {
     registerRoute(): BaseRoute<BaseController>[] {
-        const todoService = new TodoService({ todoRepo: new TodoRepository() });
+        const todoService = new TodoService({ todoRepository: new TodoRepository() });
         const todoController = new TodoController({ todoService: todoService });
 
         return [

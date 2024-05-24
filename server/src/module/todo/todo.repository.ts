@@ -10,9 +10,7 @@ export class TodoRepository extends BaseRepository {
         throw new Error("Method not implemented.");
     }
     async create(param: TodoType): Promise<any> {
-        const todo: ITodo = new Todo(param)
-        await todo.save()
-        return todo
+        return await Todo.create(param);
     }
     async delete(id: any): Promise<void> {
         await Todo.findByIdAndDelete(id)

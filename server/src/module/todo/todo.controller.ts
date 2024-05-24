@@ -6,10 +6,11 @@ import { SuccessPayload } from "../../base/base.type";
 import { redisClient } from "../../config/redis.config";
 import { genCacheKey } from "../../utils/redis.cache";
 export class TodoController extends BaseController {
+
     private todoService: TodoService
-    constructor(service: { todoService: TodoService }) {
-        super(service)
-        this.todoService = this.getService("todoService")
+    constructor({ todoService }: { todoService: TodoService }) {
+        super({ todoService });
+        this.todoService = todoService;
     }
 
     public getAll = async (req: Request, res: Response) => {
