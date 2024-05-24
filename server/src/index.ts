@@ -42,3 +42,4 @@ class Application extends App {
     }
 }
 new Application(appConfig);
+

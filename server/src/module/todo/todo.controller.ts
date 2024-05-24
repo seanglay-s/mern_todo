@@ -3,7 +3,8 @@ import { BaseController } from "../../base/base.controller";
 import { TodoService } from "./todo.service";
 import { TodoType, TodoUpdateType } from "./todo.type";
 import { SuccessPayload } from "../../base/base.type";
-
+import { redisClient } from "../../config/redis.config";
+import { genCacheKey } from "../../utils/redis.cache";
 export class TodoController extends BaseController {
     private todoService: TodoService
     constructor(service: { todoService: TodoService }) {
@@ -13,8 +14,23 @@ export class TodoController extends BaseController {
 
     public getAll = async (req: Request, res: Response) => {
         try {
-            const data = await this.todoService.list()
-            this.safeResponse(res, { payload: data });
+            const cacheKey = genCacheKey({
+                endpoint: req.originalUrl,
+                key: JSON.stringify(req.query)
+            })
+            const cacheData = await redisClient.get(cacheKey)
+            let result = {};
+            if (!cacheData) {
+                result = await this.todoService.list()
+                await redisClient.set({
+                    key: cacheKey,
+                    value: JSON.stringify(result),
+                    expInSec: 5
+                })
+            } else {
+                result = JSON.parse(cacheData)
+            }
+            this.safeResponse(res, { payload: result });
         } catch (error) {
             this.safeError(res, error);
         }
